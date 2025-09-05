@@ -12,8 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          lfs: true  # if you’re using Git LFS
-
+          lfs: false  # 👈 if you're using Git LFS
       - name: Setup Unreal build
         run: |
           echo "Building Unreal project..."
