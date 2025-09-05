@@ -20,7 +20,7 @@ jobs:
         run: |
           echo Building Unreal project...
           "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" ^
-            MyGameEditor Win64 Development ^
+            MyProject4Editor Win64 Development ^
             -Project="%CD%\MyProject4.uproject" -WaitMutex -NoHotReload
 
       - name: Package Game
