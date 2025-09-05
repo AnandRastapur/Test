@@ -1,0 +1,34 @@
+name: Unreal Engine CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: self-hosted  # 👈 this is your runner
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          lfs: true  # if you’re using Git LFS
+
+      - name: Setup Unreal build
+        run: |
+          echo "Building Unreal project..."
+          "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" ^
+            MyGameEditor Win64 Development ^
+            -Project="%CD%\MyProject4.uproject" -WaitMutex -NoHotReload
+
+      - name: Package Game
+        run: |
+          "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
+            -project="%CD%\MyProject4.uproject" -noP4 -platform=Win64 -clientconfig=Development -serverconfig=Development ^
+            -cook -allmaps -build -stage -pak -archive -archivedirectory="%CD%\BuildOutput"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unreal-Build
+          path: BuildOutput
