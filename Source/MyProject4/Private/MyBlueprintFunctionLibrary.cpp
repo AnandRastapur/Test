@@ -5,4 +5,5 @@
 
 void UMyBlueprintFunctionLibrary::myfunction()
 {
+    UE_LOG(LogTemp,Warning,TEXT("Hello"));
 }
