@@ -7,31 +7,55 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # your runner (AT-7105)
+    runs-on: self-hosted
     defaults:
       run:
-        shell: cmd   # 👈 force CMD for every step
+        shell: cmd
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Build Unreal project
+      # ---------------- Windows Build ----------------
+      - name: Build Unreal project (Win64)
         run: |
-          echo Building Unreal project...
+          echo Building Unreal project (Windows)...
           "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" ^
             MyProject4Editor Win64 Development ^
             -Project="%CD%\MyProject4.uproject" -WaitMutex -NoHotReload
 
-      - name: Package Game
+      - name: Package Game (Win64)
         run: |
           "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
             -project="%CD%\MyProject4.uproject" -noP4 -platform=Win64 ^
             -clientconfig=Development -serverconfig=Development ^
-            -cook -allmaps -build -stage -pak -archive -archivedirectory="%CD%\BuildOutput"
+            -cook -allmaps -build -stage -pak -archive -archivedirectory="%CD%\BuildOutput\Win64"
 
-      - name: Upload artifact
+      # ---------------- Android Build (APK) ----------------
+      - name: Build Unreal project (Android)
+        run: |
+          echo Building Unreal project (Android)...
+          "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" ^
+            MyProject4Editor Android Development ^
+            -Project="%CD%\MyProject4.uproject" -WaitMutex -NoHotReload
+
+      - name: Package Game (Android - APK)
+        run: |
+          "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
+            -project="%CD%\MyProject4.uproject" -noP4 -platform=Android ^
+            -clientconfig=Development -serverconfig=Development ^
+            -cook -allmaps -build -stage -pak -archive -archivedirectory="%CD%\BuildOutput\Android" ^
+            -package -apk
+
+      # ---------------- Upload Artifacts ----------------
+      - name: Upload Win64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Unreal-Build
-          path: BuildOutput
+          name: Unreal-Build-Win64
+          path: BuildOutput/Win64
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unreal-Build-Android
+          path: BuildOutput/Android
