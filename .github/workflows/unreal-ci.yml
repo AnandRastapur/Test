@@ -16,12 +16,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # -------- Build (Android) --------
+      # -------- Build (Android Game Target) --------
       - name: Build Unreal project (Android)
         run: |
-          echo Building Unreal project (Android)...
+          echo Building Unreal project (Android Game)...
           "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" ^
-            MyProject4Editor Android Development ^
+            MyProject4 Android Development ^
             -Project="%CD%\MyProject4.uproject" -WaitMutex -NoHotReload
 
       # -------- Package (APK) --------
